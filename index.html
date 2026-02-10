@@ -87,7 +87,27 @@ section {
     font-weight: 800;
     letter-spacing: 12px;
     text-shadow: 0 0 80px #a000ff;
-    overflow: hidden;
+    overflow: visible;
+    transform-style: preserve-3d;
+    perspective: 1200px;
+    background: transparent;
+    border: none;
+    box-shadow: none;
+    padding: 0;
+    margin: 0;
+    position: relative;
+    animation: heroAmbientFloat 18s ease-in-out infinite;
+}
+
+.hero-title::before {
+    content: "";
+    position: absolute;
+    inset: -40px;
+    background: radial-gradient(circle, rgba(160,0,255,0.25), transparent 70%);
+    filter: blur(40px);
+    opacity: 0;
+    animation: heroVoidMaterialize 2.4s ease forwards;
+    pointer-events: none;
 }
 
 .hero-subtitle {
@@ -95,6 +115,7 @@ section {
     font-size: clamp(22px, 3.6vw, 38px);
     color: #b4baff;
     overflow: hidden;
+    animation: heroSubtitleDrift 14s ease-in-out infinite;
 }
 
 @media (max-width: 720px) {
@@ -106,13 +127,15 @@ section {
 
 .letter {
     display: inline-block;
-    transform: translateY(120%);
+    transform: translateY(120%) scale(0.92);
     opacity: 0;
+    filter: blur(5px);
 }
 
 .revealed .letter {
-    transform: translateY(0);
+    transform: translateY(0) scale(1);
     opacity: 1;
+    filter: blur(0);
 }
 
 .info-card {
@@ -238,6 +261,14 @@ section {
     color: #a79aff;
 }
 
+@media (max-width: 420px) {
+    .projects-title {
+        font-size: clamp(30px, 8vw, 38px);
+        line-height: 1.1;
+        letter-spacing: 1px;
+    }
+}
+
 .projects-grid {
     width: 100%;
     max-width: 1040px;
@@ -261,6 +292,8 @@ section {
     opacity: 0;
     transform: translateY(60px) rotateX(6deg);
     transition: opacity 0.9s ease, transform 0.9s ease, box-shadow 0.6s ease;
+    position: relative;
+    will-change: transform, opacity, filter;
 }
 
 .project-card.visible {
@@ -270,6 +303,41 @@ section {
 
 .project-card:hover {
     box-shadow: 0 0 100px #a000ff;
+}
+
+.project-card::after {
+    content: "";
+    position: absolute;
+    inset: -2px;
+    border-radius: inherit;
+    background: radial-gradient(circle at center, rgba(0,240,255,0.4), transparent 60%);
+    opacity: 0;
+    filter: blur(18px);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+    transform: scale(0.85);
+    pointer-events: none;
+}
+
+.project-card.interactive-hover::after {
+    opacity: 1;
+    transform: scale(1.05);
+}
+
+.project-card.interactive-active {
+    transform: scale(0.95) translateY(-4px) perspective(800px) rotateX(3deg);
+    filter: brightness(1.2) saturate(1.1);
+    box-shadow: 0 0 140px rgba(160,0,255,0.95);
+}
+
+.project-card.interactive-focus {
+    outline: none;
+    box-shadow: 0 0 120px rgba(0,220,255,0.9);
+    transform: scale(1.02);
+}
+
+.project-card.touch-feedback {
+    transform: scale(0.97) translateY(-2px);
+    filter: brightness(1.15);
 }
 
 .final {
@@ -295,6 +363,111 @@ section {
     color: rgba(200,170,255,0.35);
 }
 
+@keyframes heroAmbientFloat {
+    0% { transform: translateZ(0) translateY(0); }
+    50% { transform: translateZ(40px) translateY(-8px); }
+    100% { transform: translateZ(0) translateY(0); }
+}
+
+@keyframes heroSubtitleDrift {
+    0% { transform: translateY(0); opacity: 0.85; }
+    50% { transform: translateY(-6px); opacity: 1; }
+    100% { transform: translateY(0); opacity: 0.85; }
+}
+
+@keyframes heroVoidMaterialize {
+    0% { opacity: 0; transform: scale(0.7); }
+    100% { opacity: 1; transform: scale(1); }
+}
+
+@keyframes textRevealDepth {
+    0% { opacity: 0; transform: translateY(40px) scale(0.96) rotateX(10deg); filter: blur(6px); }
+    100% { opacity: 1; transform: translateY(0) scale(1) rotateX(0); filter: blur(0); }
+}
+
+@keyframes textAmbientBreath {
+    0% { transform: translateY(0); }
+    50% { transform: translateY(-2px); }
+    100% { transform: translateY(0); }
+}
+
+.about-me-text,
+.skill-header span,
+.guarantee-list div,
+.review-count,
+.review-stars,
+.project-card,
+.final,
+.signature {
+    opacity: 0;
+    transform: translateY(30px) scale(0.97);
+}
+
+.text-visible {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    animation: textAmbientBreath 12s ease-in-out infinite;
+}
+
+@media (max-width: 540px) {
+    section {
+        padding: 110px 18px;
+    }
+
+    .info-card,
+    .guarantee-card {
+        padding: 46px 26px;
+        border-radius: 28px;
+    }
+
+    .about-me-text {
+        font-size: clamp(16px, 4.6vw, 20px);
+        line-height: 2.1;
+    }
+
+    .skill-header {
+        font-size: 16px;
+    }
+
+    .project-card {
+        font-size: 18px;
+        padding: 38px 22px;
+        min-height: 120px;
+    }
+
+    .review-stars {
+        gap: 8px;
+    }
+}
+
+@media (max-width: 380px) {
+    .project-card {
+        font-size: 16px;
+        padding: 32px 18px;
+        border-radius: 28px;
+    }
+}
+
+@media (min-width: 1500px) {
+    section {
+        padding: 200px 40px;
+    }
+
+    .info-card,
+    .guarantee-card {
+        padding: 100px 90px;
+    }
+
+    .projects-grid {
+        gap: 70px;
+    }
+
+    .project-card {
+        font-size: 26px;
+        padding: 70px 40px;
+    }
+}
+
 </style>
 </head>
 
@@ -316,7 +489,7 @@ section {
     <div class="info-card reveal">
         <div class="about-me-title animated-text">Обо мне</div>
         <div class="about-me-text">
-            Я занимаюсь разработкой уже много лет. Создаю сайты, телеграм-ботов, софт, автоматизации и множество других проектов.
+            Я занимаюсь програмированием уже много лет. Создаю сайты, телеграм-ботов, софты для termux, сайты и много чего ещё. Ниже представлены мои навыки в разных задачах.
         </div>
     </div>
 
@@ -355,23 +528,23 @@ section {
     </div>
 
     <div class="guarantee-card reveal">
-        <div class="guarantee-title">Гарантии</div>
+        <div class="guarantee-title animated-text">Гарантии</div>
         <div class="guarantee-list">
             <div>Работа до результата</div>
             <div>Исправление ошибок бесплатно</div>
             <div>Поддержка после завершения проекта</div>
-            <div>Прозрачные сроки выполнения</div>
-            <div>Оплата по этапам</div>
+            <div>Быстрые сроки выполнения</div>
+            <div>Оплата при получении</div>
         </div>
     </div>
 </section>
 
 <section>
-    <div class="projects-title animated-text">Мои проекты</div>
+    <div class="projects-title animated-text">Что надо посетить</div>
     <div class="projects-grid reveal-group">
         <div class="project-card">Отзывы</div>
         <div class="project-card">Переходник</div>
-        <div class="project-card">Бот для связи</div>
+        <div class="project-card">Связь со мной</div>
         <div class="project-card">Прайс</div>
     </div>
 </section>
@@ -475,7 +648,7 @@ document.querySelectorAll(".animated-text").forEach(element => {
         const span = document.createElement("span");
         span.className = "letter";
         span.textContent = char === " " ? "\u00A0" : char;
-        span.style.transition = `transform 0.9s ease ${index * 0.05}s, opacity 0.9s ease ${index * 0.05}s`;
+        span.style.transition = `transform 0.9s ease ${index * 0.05}s, opacity 0.9s ease ${index * 0.05}s, filter 0.9s ease ${index * 0.05}s`;
         element.appendChild(span);
     });
 });
@@ -514,6 +687,135 @@ const projectObserver = new IntersectionObserver(entries => {
 }, { threshold: 0.3 });
 
 document.querySelectorAll(".reveal-group").forEach(group => projectObserver.observe(group));
+
+const universalTextElements = document.querySelectorAll(".about-me-text, .skill-header span, .guarantee-list div, .review-count, .review-stars, .project-card, .final, .signature");
+
+const universalTextObserver = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
+            entry.target.classList.add("text-visible");
+            entry.target.style.animation = "textRevealDepth 0.9s ease forwards";
+        }
+    });
+}, { threshold: 0.4 });
+
+universalTextElements.forEach(el => universalTextObserver.observe(el));
+
+let floatingHeroTime = 0;
+
+function animateHeroDepth() {
+    const heroTitle = document.querySelector(".hero-title");
+    const heroSubtitle = document.querySelector(".hero-subtitle");
+
+    floatingHeroTime += 0.01;
+
+    const offsetZ = Math.sin(floatingHeroTime) * 20;
+    const offsetY = Math.cos(floatingHeroTime) * 4;
+
+    if (heroTitle) {
+        heroTitle.style.transform = `translateZ(${offsetZ}px) translateY(${offsetY}px)`;
+    }
+
+    if (heroSubtitle) {
+        heroSubtitle.style.transform = `translateY(${offsetY * 0.6}px)`;
+    }
+
+    requestAnimationFrame(animateHeroDepth);
+}
+
+animateHeroDepth();
+
+const buttonMap = {
+    "Отзывы": "https://t.me/repa_Dicstery",
+    "Переходник": "https://t.me/dicstery_place",
+    "Прайс": "https://t.me/Dicstery_prais",
+    "Связь со мной": "https://t.me/iakzo"
+};
+
+const projectButtons = document.querySelectorAll(".project-card");
+
+function openSecure(url) {
+    window.open(url, "_blank", "noopener,noreferrer");
+}
+
+projectButtons.forEach(card => {
+
+    card.setAttribute("tabindex", "0");
+    card.setAttribute("role", "button");
+    card.setAttribute("aria-label", card.textContent.trim());
+
+    let pressed = false;
+    let rafId = null;
+
+    const animatePress = (state) => {
+        cancelAnimationFrame(rafId);
+        rafId = requestAnimationFrame(() => {
+            if (state === "down") {
+                card.classList.add("interactive-active");
+            } else {
+                card.classList.remove("interactive-active");
+            }
+        });
+    };
+
+    card.addEventListener("mouseenter", () => {
+        card.classList.add("interactive-hover");
+    });
+
+    card.addEventListener("mouseleave", () => {
+        card.classList.remove("interactive-hover");
+        card.classList.remove("interactive-active");
+    });
+
+    card.addEventListener("focus", () => {
+        card.classList.add("interactive-focus");
+    });
+
+    card.addEventListener("blur", () => {
+        card.classList.remove("interactive-focus");
+    });
+
+    card.addEventListener("pointerdown", () => {
+        pressed = true;
+        animatePress("down");
+    }, { passive: true });
+
+    card.addEventListener("pointerup", () => {
+        pressed = false;
+        animatePress("up");
+    }, { passive: true });
+
+    card.addEventListener("touchstart", () => {
+        card.classList.add("touch-feedback");
+        animatePress("down");
+    }, { passive: true });
+
+    card.addEventListener("touchend", () => {
+        card.classList.remove("touch-feedback");
+        animatePress("up");
+    }, { passive: true });
+
+    card.addEventListener("keydown", e => {
+        if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            animatePress("down");
+        }
+    });
+
+    card.addEventListener("keyup", e => {
+        if (e.key === "Enter" || e.key === " ") {
+            animatePress("up");
+            const url = buttonMap[card.textContent.trim()];
+            if (url) openSecure(url);
+        }
+    });
+
+    card.addEventListener("click", () => {
+        const url = buttonMap[card.textContent.trim()];
+        if (url) openSecure(url);
+    });
+
+});
 
 </script>
 
